@@ -34,6 +34,8 @@ pytest -q
 
 Dense retrieval uses `Qwen/Qwen3-Embedding-4B` (enabled in `configs/hycaro.yaml`). If dense retrieval is disabled, a deterministic hashing fallback is used; it is only for development.
 
+To try the selector without a GPU or a model download, use `configs/hycaro_cpu_demo.yaml`. It is `configs/hycaro.yaml` with dense retrieval switched off, so its candidate pools and numbers differ from the paper.
+
 ## Usage
 
 Select context for one issue:
@@ -96,6 +98,30 @@ These are the HyCARO search parameters in `configs/hycaro.yaml`:
 
 The surrogate coefficients are in `fitness.ball` (`alpha=1.0`, `beta=0.35`, `gamma=0`, `cost_lambda=0.25`).
 
+## Relation types
+
+The scanner in `graph.py` uses its own relation names. They map onto the relation types in the paper as follows:
+
+| paper | code | support witness |
+| --- | --- | --- |
+| class containment | `encloses` | yes |
+| imports | `imports` | yes |
+| invocation | `calls` | yes |
+| inheritance | `inherits` | yes |
+| tests | `tests` | yes |
+| decorators | `decorates` | yes |
+| references | `references` | yes |
+| state | `state` | no: the edge does not record which unit reads and which writes |
+| (none) | `contains` | no: file-level packaging; not walked when measuring hop distance |
+
+## Ablations
+
+The variants in the paper's ablation table are run with `scripts/run_contextbench.py` and either a method name (`seed_only`, `relation_greedy`) or a one-line config variant (`configs/ablation_no_support.yaml`, `configs/ablation_pairwise.yaml`). See `docs/ABLATION.md` for the commands.
+
 ## Benchmarks
 
 Third-party benchmark data and repository snapshots are not bundled. Install the official implementations with `bash scripts/setup_benchmarks.sh`; see `docs/BENCHMARK_SETUP.md`. Benchmark results are not included in this repository.
+
+## License
+
+Apache License 2.0; see `LICENSE`.

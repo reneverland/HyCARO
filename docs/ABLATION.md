@@ -1,52 +1,26 @@
-# Planned ablations
+# Ablations reported in the manuscript
 
-Mechanism (`docs/COST_LAMBDA_PARETO.md`) explains the frontier by varying
-volume. Sensitivity (`docs/SENSITIVITY.md`) nudges the ball geometry `(k, d)`
-around the frozen point. Ablation **turns a term off** and asks whether the
-frozen method still works. Frozen point: `d=1`, `k=5`, `cost_lambda=0.25`,
-`beta=0.35`, `B=8192`.
+Table 4 of the manuscript compares full HyCARO with four variants on ContextBench. All variants share the candidate pools, token costs, seed 11, the 8,192-token budget, and the 20-second limit of `configs/hycaro.yaml`.
 
-The three objective/structure knockouts the conversation locked are already
-wired in `scripts/run_ablation.py`:
+| Variant | What changes | How to run |
+| --- | --- | --- |
+| Full HyCARO | nothing | `--method hycaro --config configs/hycaro.yaml` |
+| No support reward | `fitness.ball.beta = 0`; coverage, token cost, and relation-guided search stay | `--method hycaro --config configs/ablation_no_support.yaml` |
+| Seed-only | the shared initial contexts are packed and scored; no preference updates or replacements | `--method seed_only --config configs/hycaro.yaml` |
+| Pairwise proposals | pair-based proposals replace hyperedge-group proposals; witnesses, surrogate, and population search stay | `--method hycaro --config configs/ablation_pairwise.yaml` |
+| Relation-guided greedy | a single incumbent takes the best improving relation action at each step | `--method relation_greedy --config configs/hycaro.yaml` |
 
-| paper name | config | script key | what is gone |
-| --- | --- | --- | --- |
-| Token shadow price | `fitness.ball.cost_lambda=0` | `no_cost_term` | F no longer pays for tokens; S should swell toward B |
-| Query-conditioned support | `fitness.ball.beta=0` | `no_support_term` | F keeps Cov and cost only; isolated gold is no longer penalized for lacking neighbors |
-| Anchors only | `optimizer.ball_radius=0` | `radius_zero` | feasible set is the k anchors; radius contribution is isolated |
+Each row is one call of `scripts/run_contextbench.py`, for example:
 
-`d=0` is not the same as Node-RepoMARO. Node-RepoMARO searches the
-**unrestricted pool** (no ball). `d=0` still has a ball, of radius zero: only
-the k anchors are admissible. The manuscript table already has
-"Anchor-ball → unrestricted pool (Node-RepoMARO)" as its own row; keep
-`radius_zero` as a separate row or it double-counts.
+```bash
+python scripts/run_contextbench.py --method hycaro --config configs/ablation_pairwise.yaml \
+  --budget 8192 --out results/cb_ablation_pairwise.jsonl
+```
 
-Do not fold these into the lambda or `(k, d)` grids. `lambda=0` is the
-endpoint of the mechanism sweep, but as a *result* it is reported as an
-ablation (term absent), not as a point on the frontier. `d=0` is the endpoint
-of the d-sensitivity, but as a *result* it is "radius removed." Same
-experiment can feed both displays; the captions differ.
+The two config-based variants write records under the method name `HyCARO`, so give each its own `--out` file. Score a file with:
 
-## Other knockouts already in the script
+```bash
+python scripts/analysis/contextbench_f1.py results/cb_ablation_pairwise.jsonl
+```
 
-Optimizer plumbing, not model claims. Report in the paper table only if they
-move resolved or tokens by a meaningful amount; otherwise appendix.
-
-- `no_budget_repair`
-- `no_repo_local_search`
-- `no_retrieval_seeding`
-- `no_memory`
-- `no_population_difference`
-- `no_incremental_local` (engineering; should be bit-identical)
-- `no_early_stopping`
-
-Manuscript rows not yet a one-flag ablation: hypergraph→pairwise graph,
-method units→monolithic classes, query needs→additive relevance,
-exact-ΔF→relevance ordering. Those need code paths, not just a yaml toggle.
-
-## Protocol
-
-Same 40 instances, same pools, temperature 0.0, one generation pass each.
-Record tokens, gold spans/files, and resolved. `lambda=0` will look like the
-cheap-lambda mechanism points (high tokens, possible gold eviction); the
-ablation caption is "without a token price," not "another frontier coordinate."
+`scripts/run_ablation.py` runs a broader set of knockouts on a single local repository and issue; those knockouts are development aids and are not reported in the manuscript.

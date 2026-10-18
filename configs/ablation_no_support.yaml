@@ -1,0 +1,101 @@
+seed: 11
+budget_tokens: 8192
+candidate_pool:
+  granularity: symbol
+  max_units: 300
+  lexical_top_k: 60
+  dense_top_k: 60
+  structural_seed_top_k: 12
+  structural_expand_hops: 1
+  include_extensions: [".py", ".pyi", ".js", ".jsx", ".ts", ".tsx", ".java", ".go", ".rs", ".c", ".cc", ".cpp", ".h", ".hpp", ".md", ".toml", ".yaml", ".yml", ".json"]
+  exclude_dirs: [".git", ".venv", "venv", "node_modules", "dist", "build", "target", "__pycache__"]
+  max_file_bytes: 500000
+  generic_chunk_lines: 120
+  graph:
+    relations: ["contains", "encloses", "imports", "tests", "calls", "inherits", "decorates", "references", "state"]
+    traversal_relations: ["encloses", "imports", "tests", "calls", "inherits", "decorates"]
+    max_symbol_fanout: 4
+  dense:
+    enabled: true
+    model: "Qwen/Qwen3-Embedding-4B"
+    device: "cuda"
+    batch_size: 32
+    max_seq_length: 1024
+fitness:
+  alpha: 0.45
+  beta: 0.35
+  gamma: 0.20
+  sigma: 2.0
+  redundancy_delta: 0.3
+  anchor_count: 5
+  relevance_lexical_weight: 0.5
+  relevance_dense_weight: 0.5
+  ball:
+    # Manuscript starting point. HyCARO scores max-witness support; RepoMARO
+    # still scores incident-relation mass when this same file is reused.
+    alpha: 1.0
+    beta: 0.0  # ablation: no support reward
+    gamma: 0.0
+    cost_lambda: 0.25
+    semantic_need_share: 0.5
+    max_lexical_needs: 32
+    max_need_df_ratio: 0.5
+    semantic_need_depth: 4
+    lexical_need_depth: 1
+    need_depth_decay: 0.5
+    redundancy_delta: 0.3
+optimizer:
+  population_size: 20
+  max_iterations: 40
+  threshold: 0.5
+  lambda_min: 0.15
+  lambda_max: 0.80
+  crossover_rate: 0.70
+  elite_fraction: 0.50
+  ball_anchors: 5
+  ball_radius: 1
+  local_proposals: 12
+  local_screen_size: 64
+  local_search_patience: 4
+  stopping_patience: 10
+  epsilon: 0.0001
+  seed_high: 0.90
+  seed_low: 0.10
+  seed_noise: 0.03
+  enable_cache: true
+  enable_incremental_local: true
+  enable_local_search: true
+  enable_early_stopping: true
+  enable_retrieval_seeding: true
+  enable_memory: true
+  enable_population_difference: true
+  enable_budget_repair: true
+  # Main-table controls share the anchor ball. Search stops at this deadline
+  # and keeps the best fully evaluated feasible set. HyCARO usually finishes
+  # its short schedule well inside it.
+  restrict_to_ball: true
+  selection_deadline_s: 20
+  de_population: 6
+  de_iterations: 40
+  hycaro_time_budget_s: 20
+  # HyCARO ignores population_size / max_iterations and uses these instead.
+  hycaro_population: 6
+  hycaro_iterations: 3
+  hycaro_proposals: 3
+  hycaro_a_max: 3
+  hycaro_d_max: 3
+  hycaro_stop: 2
+  hycaro_crossover: 0.8
+  hycaro_lambda_min: 0.2
+  hycaro_lambda_max: 0.8
+  hycaro_eps_x: 0.001
+  hycaro_eps_f: 1.0e-9
+downstream:
+  provider: openai
+  model: "gpt-5.6-luna"
+  reasoning_effort: medium
+  max_output_tokens: 12000
+  temperature: 0.0
+  apply_retries: 1
+  request_timeout: 900
+  timeout_retries: 2

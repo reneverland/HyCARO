@@ -3,8 +3,8 @@
 The values are the recorded per-round means of the trajectory run plotted in the
 original ``figures/surrogate_trajectory.pdf``. They were recovered from that
 PDF's vector paths using its tick positions and agree with the text to three
-decimals. This trajectory run predates the final selector revision, so its last
-Full-HyCARO F1 (about 0.104) differs from the main-table value (0.109).
+decimals. The separate star marks the final HyCARO line F1 reported in the main
+table (0.109); it is not part of the recorded trajectory.
 """
 
 from __future__ import annotations
@@ -29,6 +29,8 @@ LINE_F1 = {
     "Full HyCARO": [0.0876, 0.1005, 0.0998, 0.1040],
     "Pairwise proposals": [0.0876, 0.0987, 0.1004, 0.1017],
 }
+
+FINAL_LINE_F1 = 0.109
 
 STYLE = {
     "Seed-only": dict(color="#7f7f7f", linestyle="--", marker=None),
@@ -76,17 +78,33 @@ def main() -> None:
         ax.set_ylabel(ylabel)
         ax.set_title(title, fontsize=8)
         ax.grid(axis="y", linewidth=0.4, alpha=0.5)
+    axes[1].scatter(
+        [3],
+        [FINAL_LINE_F1],
+        marker="*",
+        s=90,
+        color=STYLE["Full HyCARO"]["color"],
+        edgecolors="black",
+        linewidths=0.4,
+        zorder=4,
+        label="Final HyCARO (Table 1)",
+    )
     axes[1].annotate(
-        f"{LINE_F1['Full HyCARO'][-1]:.3f}",
-        (3, LINE_F1["Full HyCARO"][-1]),
+        f"{FINAL_LINE_F1:.3f}",
+        (3, FINAL_LINE_F1),
         textcoords="offset points",
-        xytext=(-4, 5),
+        xytext=(-7, -2),
         ha="right",
+        va="center",
         fontsize=7,
         color=STYLE["Full HyCARO"]["color"],
     )
+    axes[1].set_ylim(0.086, 0.111)
     handles, labels = axes[0].get_legend_handles_labels()
-    fig.legend(handles, labels, loc="upper center", ncol=3, frameon=False, bbox_to_anchor=(0.5, 1.02))
+    h1, l1 = axes[1].get_legend_handles_labels()
+    handles.append(h1[-1])
+    labels.append(l1[-1])
+    fig.legend(handles, labels, loc="upper center", ncol=4, frameon=False, bbox_to_anchor=(0.5, 1.02))
     fig.tight_layout(rect=(0, 0, 1, 0.9))
     out = Path(__file__).resolve().parents[2] / "figures" / "surrogate_trajectory_v2.pdf"
     out.parent.mkdir(parents=True, exist_ok=True)

@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 import glob
 import json
+import os
 import pickle
 import re
 from pathlib import Path
@@ -45,8 +46,10 @@ def gold_spans(patch: str) -> dict[str, list[tuple[int, int]]]:
 
 def load_lite(limit: int, offset: int):
     files = glob.glob(
-        "/home/yuyang/.cache/huggingface/hub/datasets--SWE-bench--SWE-bench_Lite/"
-        "**/test-*.parquet",
+        os.path.join(
+            os.environ.get("HF_HOME", os.path.expanduser("~/.cache/huggingface")),
+            "hub/datasets--SWE-bench--SWE-bench_Lite/**/test-*.parquet",
+        ),
         recursive=True,
     )
     if not files:

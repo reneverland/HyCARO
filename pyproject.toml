@@ -5,8 +5,9 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "repomaro-experiments"
 version = "0.1.0"
-description = "Experimental implementation of RepoMARO for token-budgeted repository context selection"
+description = "HyCARO: hypergraph-catalyzed search for budgeted repository context selection"
 requires-python = ">=3.10"
+license = {text = "Apache-2.0"}
 dependencies = [
   "numpy>=1.24",
   "networkx>=3.0",

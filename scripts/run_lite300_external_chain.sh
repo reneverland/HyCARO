@@ -10,10 +10,6 @@ MANIFEST="${MANIFEST:-cache/repomap_lite300_manifest.jsonl}"
 mkdir -p "$LOGDIR" cache/locagent_graphs cache/locagent_bm25
 
 export LD_LIBRARY_PATH="${ROOT}/.cuda_compat:${LD_LIBRARY_PATH:-}"
-export HTTPS_PROXY="${HTTPS_PROXY:-http://127.0.0.1:10809}"
-export HTTP_PROXY="${HTTP_PROXY:-http://127.0.0.1:10809}"
-export https_proxy="${https_proxy:-$HTTPS_PROXY}"
-export http_proxy="${http_proxy:-$HTTP_PROXY}"
 
 log() { echo "[$(date '+%F %T')] $*"; }
 

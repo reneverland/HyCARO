@@ -11,23 +11,12 @@ from .patch_format import make_applyable
 from .schema import CandidatePool
 
 
-def _detect_local_http_proxy() -> str | None:
-    """Use an explicit proxy, or the local HTTP proxy on this machine if it is up."""
+def _env_proxy() -> str | None:
     for key in ("HTTPS_PROXY", "https_proxy", "HTTP_PROXY", "http_proxy"):
         value = os.environ.get(key)
         if value:
             return value
-    import socket
-
-    sock = socket.socket()
-    sock.settimeout(0.2)
-    try:
-        sock.connect(("127.0.0.1", 10809))
-    except OSError:
-        return None
-    finally:
-        sock.close()
-    return "http://127.0.0.1:10809"
+    return None
 
 
 def _openai_http_client(timeout: float = 900.0):
@@ -37,7 +26,7 @@ def _openai_http_client(timeout: float = 900.0):
         "timeout": httpx.Timeout(float(timeout), connect=30.0),
         "trust_env": True,
     }
-    proxy = _detect_local_http_proxy()
+    proxy = _env_proxy()
     if proxy:
         kwargs["proxy"] = proxy
     return httpx.Client(**kwargs)

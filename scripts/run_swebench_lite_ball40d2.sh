@@ -30,10 +30,6 @@ export PYTHONUNBUFFERED=1
 export GIT_TERMINAL_PROMPT=0
 export HF_HUB_OFFLINE="${HF_HUB_OFFLINE:-1}"
 export TRANSFORMERS_OFFLINE="${TRANSFORMERS_OFFLINE:-1}"
-export HTTPS_PROXY="${HTTPS_PROXY:-http://127.0.0.1:10809}"
-export HTTP_PROXY="${HTTP_PROXY:-http://127.0.0.1:10809}"
-export https_proxy="${https_proxy:-$HTTPS_PROXY}"
-export http_proxy="${http_proxy:-$HTTP_PROXY}"
 # shellcheck disable=SC1091
 source .venv/bin/activate
 exec python scripts/run_swebench.py \

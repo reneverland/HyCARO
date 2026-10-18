@@ -48,10 +48,6 @@ export GIT_TERMINAL_PROMPT=0
 export HF_HUB_OFFLINE="${HF_HUB_OFFLINE:-1}"
 export TRANSFORMERS_OFFLINE="${TRANSFORMERS_OFFLINE:-1}"
 export HF_DATASETS_OFFLINE="${HF_DATASETS_OFFLINE:-1}"
-export HTTPS_PROXY="${HTTPS_PROXY:-http://127.0.0.1:10809}"
-export HTTP_PROXY="${HTTP_PROXY:-http://127.0.0.1:10809}"
-export https_proxy="${https_proxy:-$HTTPS_PROXY}"
-export http_proxy="${http_proxy:-$HTTP_PROXY}"
 
 PY="${ROOT}/.venv/bin/python"
 

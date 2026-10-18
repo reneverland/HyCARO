@@ -29,14 +29,14 @@ def _select(args) -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="RepoMARO experiment CLI")
+    parser = argparse.ArgumentParser(description="HyCARO experiment CLI")
     sub = parser.add_subparsers(dest="cmd", required=True)
     p = sub.add_parser("select", help="Run one selector on one local repository")
     p.add_argument("--repo", required=True)
     p.add_argument("--issue", required=True)
     p.add_argument("--instance-id", default="local-instance")
-    p.add_argument("--config", default="configs/default.yaml")
-    p.add_argument("--method", choices=BUILTIN_METHODS, default="repomaro")
+    p.add_argument("--config", default="configs/hycaro.yaml")
+    p.add_argument("--method", choices=BUILTIN_METHODS, default="hycaro")
     p.add_argument("--budget", type=int)
     p.add_argument("--out")
     p.set_defaults(func=_select)

@@ -44,6 +44,7 @@ RECORD_NAME = {
     "greedy_1swap": "Greedy+1swap",
     "two_unit": "Two-unit",
     "de_repair": "DE+repair",
+    "seed_only": "Seed-only",
     "relation_greedy": "Relation-guided greedy",
 }
 

@@ -32,7 +32,7 @@ def main() -> None:
     ap.add_argument("--repo", required=True)
     ap.add_argument("--issue", required=True)
     ap.add_argument("--instance-id", default="local-instance")
-    ap.add_argument("--config", default="configs/default.yaml")
+    ap.add_argument("--config", default="configs/hycaro.yaml")
     ap.add_argument("--budget", type=int, default=8192)
     ap.add_argument("--out", default="results/ablation.json")
     args = ap.parse_args()

@@ -23,7 +23,7 @@ from run_swebench import _build_pool
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--config", default="configs/default.yaml")
+    ap.add_argument("--config", default="configs/hycaro.yaml")
     ap.add_argument("--checkout-cache", default="cache/checkouts")
     ap.add_argument("--pool-cache", default="cache/pools_v3")
     ap.add_argument("--budget", type=int, default=8192)

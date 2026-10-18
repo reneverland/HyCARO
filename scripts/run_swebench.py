@@ -102,9 +102,9 @@ def _build_pool(builder, inst, budget: int, cfg: dict, cache_dir: Path | None):
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--checkout-cache", default="cache/checkouts")
-    ap.add_argument("--config", default="configs/default.yaml")
+    ap.add_argument("--config", default="configs/hycaro.yaml")
     ap.add_argument("--method", choices=BUILTIN_METHODS, help="single method; overrides --methods")
-    ap.add_argument("--methods", default="bm25,dense,rrf,mmr,greedy,binary_pso,generic_maro,repomaro")
+    ap.add_argument("--methods", default="bm25,dense,rrf,mmr,repograph,greedy_1swap,two_unit,de_repair,hycaro")
     ap.add_argument("--budget", type=int, default=8192)
     ap.add_argument("--limit", type=int)
     ap.add_argument("--offset", type=int, default=0, help="Skip the first N Lite instances before applying --limit")

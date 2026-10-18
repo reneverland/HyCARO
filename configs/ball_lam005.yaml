@@ -1,0 +1,92 @@
+seed: 42
+budget_tokens: 8192
+candidate_pool:
+  granularity: symbol
+  max_units: 300
+  lexical_top_k: 60
+  dense_top_k: 60
+  structural_seed_top_k: 12
+  structural_expand_hops: 1
+  include_extensions: [".py", ".pyi", ".js", ".jsx", ".ts", ".tsx", ".java", ".go", ".rs", ".c", ".cc", ".cpp", ".h", ".hpp", ".md", ".toml", ".yaml", ".yml", ".json"]
+  exclude_dirs: [".git", ".venv", "venv", "node_modules", "dist", "build", "target", "__pycache__"]
+  max_file_bytes: 500000
+  generic_chunk_lines: 120
+  graph:
+    # Relations the scanner emits.
+    relations: ["contains", "encloses", "imports", "tests", "calls", "inherits", "decorates", "references", "state"]
+    # Relations that may be walked when measuring hops (pool expansion, ball
+    # radius, structural score). `contains` is file-level packaging, not
+    # proximity; `references`/`state` are recall-oriented and too dense to define
+    # a neighbourhood. All three still feed the coherence term.
+    traversal_relations: ["encloses", "imports", "tests", "calls", "inherits", "decorates"]
+    # A bare name resolving to more than this many symbols carries no signal.
+    max_symbol_fanout: 4
+  dense:
+    enabled: true
+    model: "Qwen/Qwen3-Embedding-4B"
+    device: "cuda"
+    batch_size: 1
+    max_seq_length: 1024
+fitness:
+  # Baseline selectors (bm25/dense/rrf/mmr/greedy/pso/generic-maro) score with the
+  # plain surrogate; the `ball` block below is what RepoMARO optimizes.
+  alpha: 0.45
+  beta: 0.35
+  gamma: 0.20
+  sigma: 2.0
+  redundancy_delta: 0.3
+  anchor_count: 5
+  relevance_lexical_weight: 0.5
+  relevance_dense_weight: 0.5
+  ball:
+    # F = alpha*Cov(q,S) + beta*Supp(S|q) - gamma*Red(S) - cost_lambda*ell(S)/B
+    alpha: 1.0
+    beta: 0.35
+    gamma: 0.0
+    # Low end of the frontier sweep: near-free tokens, so the selector should
+    # spend most of the 8192 budget. Pairs with 0.50 at the other end to show
+    # whether the cost term is doing real work or the curve is flat.
+    cost_lambda: 0.05
+    semantic_need_share: 0.5      # share of need mass carried by the issue embedding
+    max_lexical_needs: 32         # identifiers from the issue, highest idf first
+    max_need_df_ratio: 0.5        # a term in more than half the pool carries no signal
+    semantic_need_depth: 4        # read the issue-level need off its best p units, not just the best one
+    lexical_need_depth: 1         # an identifier is answered once; naming it twice buys nothing
+    need_depth_decay: 0.5         # geometric weights over those p units
+    # support_relations: null -> every repository relation except file "contains"
+    redundancy_delta: 0.3
+optimizer:
+  population_size: 20
+  max_iterations: 40
+  threshold: 0.5
+  lambda_min: 0.15
+  lambda_max: 0.80
+  crossover_rate: 0.70
+  elite_fraction: 0.50
+  ball_anchors: 5               # k highest-relevance units seed the feasible region
+  ball_radius: 1                # a unit is admissible within d traversal hops of an anchor
+  local_proposals: 12
+  local_screen_size: 64         # ball units ranked by exact one-unit delta F per refinement
+  local_search_patience: 4
+  stopping_patience: 10
+  epsilon: 0.0001
+  seed_high: 0.90
+  seed_low: 0.10
+  seed_noise: 0.03
+  enable_cache: true
+  enable_incremental_local: true
+  enable_local_search: true
+  enable_early_stopping: true
+  enable_retrieval_seeding: true
+  enable_memory: true
+  enable_population_difference: true
+  enable_budget_repair: true
+downstream:
+  provider: openai
+  model: "gpt-5.6-luna"
+  reasoning_effort: medium
+  max_output_tokens: 12000
+  temperature: 0.0
+  apply_retries: 1
+  request_timeout: 900
+  timeout_retries: 2

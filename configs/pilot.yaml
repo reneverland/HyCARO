@@ -1,0 +1,57 @@
+seed: 7
+budget_tokens: 4096
+candidate_pool:
+  granularity: symbol
+  max_units: 50
+  lexical_top_k: 30
+  dense_top_k: 0
+  structural_seed_top_k: 8
+  structural_expand_hops: 1
+  include_extensions: [".py", ".pyi", ".md", ".toml", ".yaml", ".yml", ".json"]
+  exclude_dirs: [".git", ".venv", "venv", "node_modules", "dist", "build", "target", "__pycache__"]
+  max_file_bytes: 300000
+  generic_chunk_lines: 100
+  dense:
+    enabled: false
+fitness:
+  alpha: 0.45
+  beta: 0.35
+  gamma: 0.20
+  sigma: 2.0
+  redundancy_delta: 0.3
+  anchor_count: 4
+  relevance_lexical_weight: 1.0
+  relevance_dense_weight: 0.0
+optimizer:
+  population_size: 10
+  max_iterations: 15
+  threshold: 0.5
+  lambda_min: 0.15
+  lambda_max: 0.80
+  crossover_rate: 0.70
+  elite_fraction: 0.50
+  ball_anchors: 4
+  ball_radius: 1
+  local_proposals: 6
+  local_screen_size: 32
+  local_search_patience: 3
+  stopping_patience: 6
+  epsilon: 0.0001
+  seed_high: 0.90
+  seed_low: 0.10
+  seed_noise: 0.03
+  enable_cache: true
+  enable_incremental_local: true
+  enable_local_search: true
+  enable_early_stopping: true
+  enable_retrieval_seeding: true
+  enable_memory: true
+  enable_population_difference: true
+  enable_budget_repair: true
+downstream:
+  provider: openai
+  model: "gpt-5.6-luna"
+  reasoning_effort: medium
+  max_output_tokens: 8000
+  temperature: 0.0
+  apply_retries: 1

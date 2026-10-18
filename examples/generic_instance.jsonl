@@ -1,0 +1,1 @@
+{"instance_id":"toy-refund-1","query":"Coupon is not restored after a refund.","repo_root":"examples/toy_repo","gold_paths":["refund.py","coupon.py","tests/test_refund.py"]}

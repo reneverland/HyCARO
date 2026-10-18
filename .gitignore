@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+cache/
+/external/
+results/
+logs/
+*.log
+.env
+.DS_Store
+.cuda_compat/

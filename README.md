@@ -1,4 +1,4 @@
-# HyCARO: Hypergraph-Catalyzed Search for Budgeted Repository Context Selection
+# HyCARO: Relation-Guided Population Search for Token-Efficient Repository Context Selection
 
 HyCARO selects code context for repository-level tasks under a token budget. It combines a typed repository hypergraph, relation-guided bounded search, and a fixed utility surrogate to explore the trade-off between context quality, token consumption, and selection overhead.
 
@@ -6,7 +6,7 @@ The context selector requires no additional training and makes no coding-model c
 
 This repository accompanies the research manuscript by Renda Shi, School of Business, Macau University of Science and Technology.
 
-Manuscript status: In preparation for submission to IEEE Access.
+Manuscript status: In preparation for submission to the International Journal of Computational Intelligence Systems.
 
 ## Method overview
 
